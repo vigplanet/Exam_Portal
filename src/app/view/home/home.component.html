@@ -1,0 +1,209 @@
+<section class="exam-details-sec">
+    <div class="container-fluid px-5">
+        <div class="row">
+
+            <!-- left-datainfo start -->
+            <div class="col-md-12 col-lg-8 left-datainfo">
+                <!-- mobile-view visible-->
+                <div class="mobile-view-time">
+                    <h2>Time Remaning</h2>
+                    <app-timer *ngIf="surveyDetail && surveyDetail.length>0" [timealloted]="surveyDetail[0].duration"
+                        (onComplete)="timerCompleted($event)"></app-timer>
+                </div>
+
+           
+                <div class="top-info">
+                    <button type="button" class="btn btn-1">Exam Details</button>
+                    <button type="button" class="btn btn-2" *ngIf="surveyDetail && surveyDetail.length>0"
+                        [textContent]="surveyDetail[0].surveyName"></button>
+                </div>
+              
+
+                <div class="q-ans-btnbox">
+                    <button type="button" class="btn btn-primary"
+                        [textContent]="'Total Question :'+SurveyQuestionList.length"></button>
+                    <button type="button" class="btn btn-primary"
+                        [textContent]="'Answered Questions: '+answeredQuetionsCount"></button>
+                    <button type="button" class="btn btn-primary"
+                        [textContent]="'Unaswered Questions: '+notAnsweredQuetionsCount"></button>
+                </div>
+                <ng-container *ngFor="let question of SurveyQuestionList; let i = index;">
+                    <ng-container *ngIf="currentActiveQuetion.questionid==question.questionid">
+                        <div class="content-box">
+
+
+
+                            <div class="box-inner-area">
+                                <div class="que-number text-box">
+                                    <p>
+                                        <strong [textContent]="'Q. '+(i+1)"></strong>
+                                        {{question.question}}
+
+                                    </p>
+                                </div>
+
+                                <div class="que-image image-info">
+                                    
+                                    <!-- Button trigger modal -->
+                                    <a href="#" class="popimage" data-bs-toggle="modal" data-bs-target="#Popup_1">
+                                        <img [src]="changeLanguage?question.imagepath2:question.imagepath" class="img-fluid" alt="exam">
+                                    </a>
+                                    <!-- <a href="#" data-toggle="modal" data-target="#Getimagepopup"> -->
+                                        <!-- src="assets/images/ex-img.png" -->
+                                        <!-- <img [src]="changeLanguage?question.imagepath2:question.imagepath" class="img-fluid" alt="exam">
+                                    </a> -->
+
+                                </div>
+                                <div class="que-option points-info">
+                                    <ul class="list-unstyled">
+                                        <li *ngFor="let answer of question.survey_question_answer_list">
+                                            <input type="radio" id="Loremipsum" name="option" [value]="answer.ansid"
+                                                [(ngModel)]="QuetionAnswerModel[answer.questionID]"  (ngInit)="QuetionAnswerModel[answer.questionID]=question.updateansid" >
+                                              <label for="html" [textContent]="answer.answer"></label>
+                                        </li>
+
+                                    </ul>
+
+                                </div>
+
+                                <div class="change-lang">
+                                    <a (click)="changeLanguageEvent()" title="change-lang">Change language</a>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="foot-info footerfixed">
+                            <div class="foot-btn-area">
+                                <button type="button" class="btn" (click)="markAndReview(question)">Marked for
+                                    Revies</button>
+                                <button type="button" class="btn" (click)="saveAndNext(question)">Save & Next</button>
+                            </div>
+                            <div class="clear-res">
+                                <a title="Clear Response" (click)="clearSelectedOption(question)">Clear Response</a>
+                            </div>
+                        </div>
+                    </ng-container>
+                </ng-container>
+            </div>
+            <!-- end -->
+
+            <!-- right-datainfo start-->
+            <div class="col-md-12 col-lg-4 right-datainfo">
+
+                <!-- mobile-view-hidden -->
+                <div class="right-top-info updt-time">
+                    <h2>Time Remaning</h2>
+                    <app-timer *ngIf="surveyDetail && surveyDetail.length>0" [timealloted]="surveyDetail[0].duration"></app-timer>
+                </div>
+
+                <div class="content-box">
+                    <div class="box-inner-area">
+                        <ul class="que-links-list list-unstyled">
+                            <li [ngClass]="{'Answered': (question.anstype==0 && question.updateansid!=0), 'Answered-Review' :(question.anstype==1  && question.updateansid!=0), 'NotSeen' :(question.anstype==0  && question.updateansid==0), 'NotAnswered' :(question.anstype==2  && question.updateansid==0), 'Review' :((question.anstype==3  && question.updateansid==0) || (question.anstype==1  && question.updateansid==0)) }"
+                                *ngFor="let question of SurveyQuestionList; let i = index;"> <a
+                                    [textContent]="question.rowid" (click)="selectedQuetions(question)"></a> </li>
+
+
+                        </ul>
+
+                        <div class="view-mark-box">
+                            <ul class="list-unstyled">
+                                <li id="NotSeen"> <a href="#"> <span></span> Not Seen </a> </li>
+                                <li id="Answered"> <a href="#"> <span></span> Answered</a> </li>
+                                <li id="Review"> <a href="#"> <span></span> Review</a> </li>
+                                <li id="NotAnswered"> <a href="#"> <span></span> NotAnswered </a> </li>
+                                <li id="Answered-Review"> <a href="#"> <span></span> Answered & Review </a> </li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="submit-btn-area">
+                    <input type="submit" value="Submit Examination Details" name="sumit-exam" (click)="submitExamform()">
+                </div>
+
+            </div>
+            <!-- end -->
+
+        </div>
+    </div>
+</section>
+
+
+  
+  <!-- Modal -->
+  <div class="modal fade full-image-sec" id="Popup_1" tabindex="-1" role="dialog" aria-labelledby="Modal" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Question Full Image</h5>
+          <button type="button" class="close btn-danger" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+         <div class="fullimage">
+           <img src="http://www.sarvodayajeeneet.com/uploads/ex/1909724e-1039-48af-9f0f-e4513e8e945b.png" class="w-100">
+         </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary px-4" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<!-- GetaQuoteModel -->
+<div class="modal" id="SubmitExam" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="get-popup-inner">
+
+                    <div class="model-heading-sec">
+                        <h5 class="modal-title text-center mb-3" id="exampleModalLabel">Are You Sure You Want to Submit Exam ?</h5>
+                    </div>
+
+                    
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="cancelSubmitExam">Cancel</button>
+                <button type="button" class="btn btn-danger" id="submitExam">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal" id="AlreadyDone">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="get-popup-inner">
+
+                    <div class="model-heading-sec">
+                        <h5 class="modal-title text-center mb-3" id="exampleModalLabel">You are Already done with Exam
+                        </h5>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="full-image-area text-center">
+                                <img src="assets/images/ex-img.png" class="img-fluid" alt="exam">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
